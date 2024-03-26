@@ -22,7 +22,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2583446572099027268, guid: 4afb7d3366f82b5429660ca73b269a4f, type: 3}
       propertyPath: m_Name
-      value: AstralJean Variant
+      value: AstralJean
+      objectReference: {fileID: 0}
+    - target: {fileID: 6052350293974003106, guid: 4afb7d3366f82b5429660ca73b269a4f, type: 3}
+      propertyPath: m_Constraints
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7260169277370232077, guid: 4afb7d3366f82b5429660ca73b269a4f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -64,7 +68,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 763186032607614717, guid: 4afb7d3366f82b5429660ca73b269a4f, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

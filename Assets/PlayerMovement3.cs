@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class PlayerMovement2 : MonoBehaviour
+public class PlayerMovement3 : MonoBehaviour
 {
     public TextMeshProUGUI hintText; // Assign in Unity Editor
     public float speed = 5f; // Assign in Unity Editor
@@ -11,16 +11,19 @@ public class PlayerMovement2 : MonoBehaviour
     public Sprite movingSprite1; // Assign in Unity Editor
     public Sprite movingSprite2; // Assign in Unity Editor
     public Sprite controlSprite; // Assign in Unity Editor
+    public Sprite swordSprite; // Assign in Unity Editor
 
     private float spriteTimer = 0f; // Keep track of time since last sprite change
-private float changeSpriteInterval = 0.1f; // Interval to change sprite, adjust as needed
-private int currentSpriteIndex = 0; // Keep track of the current sprite
+    private float changeSpriteInterval = 0.1f; // Interval to change sprite, adjust as needed
+    private int currentSpriteIndex = 0; // Keep track of the current sprite
 
     public static int controlNum = 0;
 
     private bool canMove = false;
+    private bool isSwitchingToSword = false;
     private bool isMoving = false;
     private bool isControlActive = false; // Assuming you have logic for control mode elsewhere
+    private bool hasControlBeenPressed = false; // To check if control has been pressed at least once
     private float inactivityTimer = 0f;
     private SpriteRenderer spriteRenderer;
 
@@ -31,7 +34,7 @@ private int currentSpriteIndex = 0; // Keep track of the current sprite
 
     private void Start()
     {
-        hintText.text = "By pressing control you can switch between me and your body, so I may help you in need. Press Enter";
+        hintText.text = "Press Space to Use your knife to cut trees and beasts in both forms. Go ahead and use this knowledge to push the crate to the hole in the wall to walk across.";
     }
 
     private void Update()
@@ -45,16 +48,26 @@ private int currentSpriteIndex = 0; // Keep track of the current sprite
         if (Input.GetKeyDown(KeyCode.LeftControl) && !isControlActive)
         {
             StartCoroutine(ControlSpriteCoroutine());
-
+            hasControlBeenPressed = true; // Control has been pressed
         }
 
-        if (!canMove || isControlActive)
+        if (!canMove || isControlActive || isSwitchingToSword)
             return;
 
+        HandleMovementInput();
+
+        // Handle Sword Sprite Switch
+        if (Input.GetKeyDown(KeyCode.Space) && canMove && !hasControlBeenPressed && !isSwitchingToSword)
+        {
+            StartCoroutine(SwitchToSwordSprite());
+        }
+    }
+
+    private void HandleMovementInput()
+    {
         Vector3 moveDirection = Vector3.zero;
         isMoving = false; // Reset moving flag at the beginning of each Update call
 
-        // Input handling for movement
         if (Input.GetKey(KeyCode.D))
         {
             moveDirection += Vector3.right;
@@ -84,7 +97,7 @@ private int currentSpriteIndex = 0; // Keep track of the current sprite
         }
         else if (!isControlActive)
         {
-            // Increase inactivity timer if not moving and not in control mode
+            // Handle idle sprite switch
             inactivityTimer += Time.deltaTime;
             if (inactivityTimer >= 0f)
             {
@@ -95,20 +108,16 @@ private int currentSpriteIndex = 0; // Keep track of the current sprite
     }
 
     private void AnimateMovementSprite()
-{
-    spriteTimer += Time.deltaTime;
-    if (spriteTimer > changeSpriteInterval)
     {
-        // Example: Assuming you have an array of sprites for movement
-        Sprite[] movementSprites = new Sprite[] {movingSprite1, movingSprite2}; // Add your sprites here
-
-        // Cycle through the movement sprites
-        currentSpriteIndex = (currentSpriteIndex + 1) % movementSprites.Length;
-        spriteRenderer.sprite = movementSprites[currentSpriteIndex];
-
-        spriteTimer = 0f; // Reset timer
+        spriteTimer += Time.deltaTime;
+        if (spriteTimer > changeSpriteInterval)
+        {
+            Sprite[] movementSprites = { movingSprite1, movingSprite2 };
+            currentSpriteIndex = (currentSpriteIndex + 1) % movementSprites.Length;
+            spriteRenderer.sprite = movementSprites[currentSpriteIndex];
+            spriteTimer = 0f; // Reset timer
+        }
     }
-}
 
     IEnumerator ControlSpriteCoroutine()
     {
@@ -144,9 +153,26 @@ private int currentSpriteIndex = 0; // Keep track of the current sprite
 
     // Reset to idle sprite and allow for re-initiation
     spriteRenderer.sprite = idleSprite;
+    hasControlBeenPressed = false;
     isControlActive = false;
     canMove = true;
     controlNum = 0;
     }
+    }
+    IEnumerator SwitchToSwordSprite()
+    {
+        isSwitchingToSword = true; // Disable movement and idle sprite logic
+        spriteRenderer.sprite = swordSprite;
+
+        // Disable the player's ability to move while the sword sprite is active
+        bool originalCanMove = canMove;
+        canMove = false;
+
+        yield return new WaitForSeconds(0.5f); // Wait for 0.5 seconds
+
+        // Re-enable movement and reset to idle sprite
+        canMove = originalCanMove;
+        spriteRenderer.sprite = idleSprite;
+        isSwitchingToSword = false; // Re-enable movement and idle sprite logic
     }
 }

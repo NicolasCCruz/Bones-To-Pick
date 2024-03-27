@@ -86,7 +86,7 @@ private int currentSpriteIndex = 0; // Keep track of the current sprite
         {
             // Increase inactivity timer if not moving and not in control mode
             inactivityTimer += Time.deltaTime;
-            if (inactivityTimer >= 0.5f)
+            if (inactivityTimer >= 0f)
             {
                 spriteRenderer.sprite = idleSprite;
                 inactivityTimer = 0f;
@@ -118,7 +118,7 @@ private int currentSpriteIndex = 0; // Keep track of the current sprite
     spriteRenderer.sprite = controlSprite;
 
     // Perform the shake effect
-    float endTime = Time.time + 3.5f;
+    float endTime = Time.time + 1.5f;
     while (Time.time < endTime)
     {
         transform.position += new Vector3(Random.Range(-0.05f, 0.05f), Random.Range(-0.05f, 0.05f), 0);
@@ -135,7 +135,7 @@ private int currentSpriteIndex = 0; // Keep track of the current sprite
     spriteRenderer.sprite = controlSprite;
 
     // Perform the shake effect
-    float endTime = Time.time + 3.5f;
+    float endTime = Time.time + 1.5f;
     while (Time.time < endTime)
     {
         transform.position += new Vector3(Random.Range(-0.05f, 0.05f), Random.Range(-0.05f, 0.05f), 0);

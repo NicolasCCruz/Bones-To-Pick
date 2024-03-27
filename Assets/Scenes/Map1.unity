@@ -645,6 +645,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jeanGameObject: {fileID: 559030889}
+  targetSceneName: Map2
 --- !u!1001 &1613784865
 PrefabInstance:
   m_ObjectHideFlags: 0

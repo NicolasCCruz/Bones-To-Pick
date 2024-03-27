@@ -9,6 +9,7 @@ public class CrateController : MonoBehaviour
     public float speed = 2f; // Speed of the movement
 
     private Rigidbody2D rb2d;
+    private bool hasStartedMovingTowardsHole = false; // New flag to check if the movement has started
 
     // Start is called before the first frame update
     void Start()
@@ -19,10 +20,14 @@ public class CrateController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (IsWithinRange())
+        if (IsWithinRange() || hasStartedMovingTowardsHole)
         {
-            // Only disable the BoxCollider2D
-            GetComponent<BoxCollider2D>().enabled = false;
+            // Only disable the BoxCollider2D if not already moving
+            if (!hasStartedMovingTowardsHole)
+            {
+                GetComponent<BoxCollider2D>().enabled = false;
+                hasStartedMovingTowardsHole = true; // Set the flag to true as it starts moving
+            }
 
             MoveTowardsHole();
         }
@@ -30,7 +35,7 @@ public class CrateController : MonoBehaviour
 
     bool IsWithinRange()
     {
-        if (wallSprite == null) return false;
+        if (wallSprite == null || hasStartedMovingTowardsHole) return true; // If already moving, ignore range check
 
         float distanceToWall = Vector3.Distance(transform.position, wallSprite.transform.position);
         return distanceToWall <= Mathf.Sqrt(1.6f * 1.6f + 0.5f * 0.5f);

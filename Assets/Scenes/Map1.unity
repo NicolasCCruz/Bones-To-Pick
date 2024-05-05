@@ -333,6 +333,26 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2583446572099027268, guid: 4afb7d3366f82b5429660ca73b269a4f, type: 3}
   m_PrefabInstance: {fileID: 1988539079592665288}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &559030890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 559030889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 175f02a207103ed4e82e4a6ffb0261f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentMap: 0
+  hintText: {fileID: 629304652}
+  idleSprite: {fileID: 1506262330, guid: 99027929d36d9554aa914219e460259e, type: 3}
+  movingSprite1: {fileID: -731993339, guid: 99027929d36d9554aa914219e460259e, type: 3}
+  movingSprite2: {fileID: 217758817, guid: 99027929d36d9554aa914219e460259e, type: 3}
+  controlSprite: {fileID: 1593359008, guid: 99027929d36d9554aa914219e460259e, type: 3}
+  swordSprite: {fileID: 40196094, guid: 99027929d36d9554aa914219e460259e, type: 3}
+  speed: 2
 --- !u!1 &595350912
 GameObject:
   m_ObjectHideFlags: 0
@@ -1131,10 +1151,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 763186032607614717, guid: 4afb7d3366f82b5429660ca73b269a4f, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2583446572099027268, guid: 4afb7d3366f82b5429660ca73b269a4f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 559030890}
   m_SourcePrefab: {fileID: 100100000, guid: 4afb7d3366f82b5429660ca73b269a4f, type: 3}
 --- !u!4 &3287097907205324773 stripped
 Transform:

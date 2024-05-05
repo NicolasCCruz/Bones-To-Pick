@@ -1645,15 +1645,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 2052034077}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc5a9a6d677e0b748b02368afd30aef0, type: 3}
+  m_Script: {fileID: 11500000, guid: 175f02a207103ed4e82e4a6ffb0261f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentMap: 1
   hintText: {fileID: 1758365196}
-  speed: 2
   idleSprite: {fileID: 1506262330, guid: 99027929d36d9554aa914219e460259e, type: 3}
   movingSprite1: {fileID: -731993339, guid: 99027929d36d9554aa914219e460259e, type: 3}
   movingSprite2: {fileID: 217758817, guid: 99027929d36d9554aa914219e460259e, type: 3}
   controlSprite: {fileID: 1593359008, guid: 99027929d36d9554aa914219e460259e, type: 3}
+  swordSprite: {fileID: 40196094, guid: 99027929d36d9554aa914219e460259e, type: 3}
+  speed: 2
 --- !u!1001 &449907981736569492
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -10,10 +10,12 @@ GameObject:
   m_Component:
   - component: {fileID: 7260169277370232077}
   - component: {fileID: 1190254669852799717}
-  - component: {fileID: 763186032607614717}
   - component: {fileID: 6052350293974003106}
   - component: {fileID: 2818742844934289292}
   - component: {fileID: 4611902973215838414}
+  - component: {fileID: 4342791714129802242}
+  - component: {fileID: 2033512756412742241}
+  - component: {fileID: 823416824818861581}
   m_Layer: 0
   m_Name: Jean 1_0
   m_TagString: Untagged
@@ -76,7 +78,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 8
   m_Sprite: {fileID: 1506262330, guid: 99027929d36d9554aa914219e460259e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -88,24 +90,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &763186032607614717
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2583446572099027268}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c5335dd537307344a59c34b913746c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sprite1: {fileID: 1506262330, guid: 99027929d36d9554aa914219e460259e, type: 3}
-  sprite2: {fileID: -731993339, guid: 99027929d36d9554aa914219e460259e, type: 3}
-  sprite3: {fileID: 217758817, guid: 99027929d36d9554aa914219e460259e, type: 3}
-  controlSprite: {fileID: 1593359008, guid: 99027929d36d9554aa914219e460259e, type: 3}
-  speed: 2
-  textBox: {fileID: 0}
 --- !u!50 &6052350293974003106
 Rigidbody2D:
   serializedVersion: 4
@@ -132,7 +116,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &2818742844934289292
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -223,3 +207,63 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 3.75, y: 4.5983553}
   m_EdgeRadius: 0
+--- !u!114 &4342791714129802242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2583446572099027268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 175f02a207103ed4e82e4a6ffb0261f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentMap: 2
+  hintText: {fileID: 0}
+  idleSprite: {fileID: 1506262330, guid: 99027929d36d9554aa914219e460259e, type: 3}
+  movingSprite1: {fileID: -731993339, guid: 99027929d36d9554aa914219e460259e, type: 3}
+  movingSprite2: {fileID: 217758817, guid: 99027929d36d9554aa914219e460259e, type: 3}
+  controlSprite: {fileID: 1593359008, guid: 99027929d36d9554aa914219e460259e, type: 3}
+  swordSprite: {fileID: 40196094, guid: 99027929d36d9554aa914219e460259e, type: 3}
+  speed: 2
+--- !u!114 &2033512756412742241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2583446572099027268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 175f02a207103ed4e82e4a6ffb0261f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentMap: 0
+  hintText: {fileID: 0}
+  idleSprite: {fileID: 1506262330, guid: 99027929d36d9554aa914219e460259e, type: 3}
+  movingSprite1: {fileID: -731993339, guid: 99027929d36d9554aa914219e460259e, type: 3}
+  movingSprite2: {fileID: 217758817, guid: 99027929d36d9554aa914219e460259e, type: 3}
+  controlSprite: {fileID: 1593359008, guid: 99027929d36d9554aa914219e460259e, type: 3}
+  swordSprite: {fileID: 40196094, guid: 99027929d36d9554aa914219e460259e, type: 3}
+  speed: 2
+--- !u!114 &823416824818861581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2583446572099027268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 175f02a207103ed4e82e4a6ffb0261f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentMap: 2
+  hintText: {fileID: 0}
+  idleSprite: {fileID: 1506262330, guid: 99027929d36d9554aa914219e460259e, type: 3}
+  movingSprite1: {fileID: -731993339, guid: 99027929d36d9554aa914219e460259e, type: 3}
+  movingSprite2: {fileID: 217758817, guid: 99027929d36d9554aa914219e460259e, type: 3}
+  controlSprite: {fileID: 1593359008, guid: 99027929d36d9554aa914219e460259e, type: 3}
+  swordSprite: {fileID: 40196094, guid: 99027929d36d9554aa914219e460259e, type: 3}
+  speed: 2

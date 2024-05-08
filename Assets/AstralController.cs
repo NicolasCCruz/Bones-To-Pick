@@ -3,27 +3,30 @@ using UnityEngine;
 
 public class AstralController : MonoBehaviour
 {
-    public float speed = 5f; // Assign in Unity Editor
-    public Sprite idleSprite; // Assign in Unity Editor
-    public Sprite movingSprite1; // Assign in Unity Editor
-    public Sprite movingSprite2; // Assign in Unity Editor
-    public Sprite specialActionSprite; // New sprite for special action
+    public enum MapType { Map2Map3, AllMaps }
+    public MapType currentMap;
 
+    public float speed = 5f;
+    public Sprite idleSprite, movingSprite1, movingSprite2, specialActionSprite;
     private float spriteTimer = 0f;
     private float changeSpriteInterval = 0.1f;
     private int currentSpriteIndex = 0;
-
     private bool canMove = false;
     private bool isMoving = false;
     private bool isFading = false;
-    private bool canSpecialAction = false; // New flag to control special action availability
-    private bool isPerformingSpecialAction = false; // Flag to track special action
+    private bool canSpecialAction = false;
+    private bool isPerformingSpecialAction = false;
+    private bool enterPressed = false; // Tracks if Enter has been pressed
+
+    public AudioClip actionSound; // Sound clip that will be played
+    private AudioSource audioSource; // Audio source to play the sound
 
     private SpriteRenderer spriteRenderer;
 
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        audioSource = GetComponent<AudioSource>(); // Get the AudioSource component attached to the same GameObject
     }
 
     private void Start()
@@ -34,9 +37,18 @@ public class AstralController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl) && !isFading)
+        if (Input.GetKeyDown(KeyCode.Return))
         {
-            StartCoroutine(FadeSpriteTo(canMove ? 0f : 0.92f));
+            enterPressed = true;
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            // Allow control action only under specific conditions based on map type
+            if ((currentMap == MapType.Map2Map3 && enterPressed) || currentMap == MapType.AllMaps)
+            {
+                StartCoroutine(FadeSpriteTo(canMove ? 0f : 0.92f));
+            }
         }
 
         if (!canMove)
@@ -45,6 +57,10 @@ public class AstralController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && canSpecialAction && !isPerformingSpecialAction)
         {
             StartCoroutine(PerformSpecialAction());
+            if (actionSound && !audioSource.isPlaying)
+            {
+                audioSource.PlayOneShot(actionSound); // Play the action sound once
+            }
         }
 
         HandleMovement();
@@ -77,7 +93,7 @@ public class AstralController : MonoBehaviour
     {
         isPerformingSpecialAction = true;
         spriteRenderer.sprite = specialActionSprite;
-        yield return new WaitForSeconds(0.5f); // Display the special sprite for 2 seconds
+        yield return new WaitForSeconds(0.5f); // Display the special sprite for 0.5 seconds
         isPerformingSpecialAction = false;
     }
 
@@ -102,14 +118,14 @@ public class AstralController : MonoBehaviour
 
         while (!Mathf.Approximately(alpha, targetAlpha))
         {
-            alpha = Mathf.MoveTowards(alpha, targetAlpha, Time.deltaTime / 2); // Slowed down the fade speed
+            alpha = Mathf.MoveTowards(alpha, targetAlpha, Time.deltaTime / 2);
             SetAlpha(alpha);
             yield return null;
         }
 
         isFading = false;
         canMove = alpha > 0;
-        canSpecialAction = alpha > 0; // Enable special action when movement is enabled
+        canSpecialAction = alpha > 0;
     }
 
     private void SetAlpha(float alpha)

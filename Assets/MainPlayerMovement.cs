@@ -5,101 +5,114 @@ using TMPro;
 
 public class MainPlayerMovement : MonoBehaviour
 {
-    public enum MapType { Map1, Map2, Map3 }
+    public enum MapType { Map1, Map2, Map3, AllMaps }
     public MapType currentMap;
 
-    // Text and sprites assignable in Unity Editor
     public TextMeshProUGUI hintText;
     public Sprite idleSprite, movingSprite1, movingSprite2, controlSprite, swordSprite;
+    public AudioClip movementSound;
+    public AudioClip controlSound;
 
-    // Movement and animation settings
     public float speed = 5f;
     private float spriteTimer = 0f;
     private float changeSpriteInterval = 0.1f;
     private int currentSpriteIndex = 0;
-    private float inactivityTimer = 0f;
-
     private bool canMove = false;
     private bool isMoving = false;
     private bool isControlActive = false;
-    private bool hasControlBeenPressed = false;
+    private bool enterPressed = false;
     private bool isSwitchingToSword = false;
-    private bool awaitingWASDInput = false; // Specific to Map1
-
+    private bool awaitingWASDInput = false;
+    private bool firstWASDPressed = false;
 
     private SpriteRenderer spriteRenderer;
+    private AudioSource audioSource; // AudioSource component
 
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        audioSource = GetComponent<AudioSource>(); // Get the AudioSource component
     }
 
     private void Start()
     {
-        switch (currentMap)
-        {
-            case MapType.Map1:
-                hintText.text = "Hi it is I, your astral self. I am here to assist you through your journey. Press enter";
-                break;
-            case MapType.Map2:
-                hintText.text = "By pressing control you can switch between me and your body, so I may help you in need. Press Enter";
-                break;
-            case MapType.Map3:
-                hintText.text = "Press Space to Use your knife to cut trees and beasts in both forms. Go ahead and use this knowledge to push the crate to the hole in the wall to walk across.";
-                break;
-        }
+        SetInitialHintText();
     }
 
     private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            enterPressed = true;
+            HandleEnterPress();
+        }
+
+        if (canMove && !firstWASDPressed && currentMap == MapType.Map1)
+        {
+            CheckForInitialMovementInput();
+        }
+
+        if (currentMap != MapType.Map1 && ((currentMap == MapType.Map2 || currentMap == MapType.Map3) && enterPressed) || currentMap == MapType.AllMaps)
+        {
+            if (Input.GetKeyDown(KeyCode.LeftControl))
+            {
+                StartCoroutine(ControlSpriteCoroutine());
+            }
+        }
+
+        if (!canMove || isControlActive || isSwitchingToSword)
+            return;
+
+        HandleMovementInput();
+
+        if ((currentMap == MapType.Map3 || currentMap == MapType.AllMaps) && !isControlActive && !isSwitchingToSword)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                StartCoroutine(SwitchToSwordSprite());
+            }
+        }
+    }
+
+    private void SetInitialHintText()
+    {
+        switch (currentMap)
+        {
+            case MapType.Map1:
+                hintText.text = "Hi, it is I, your astral self. Press Enter to begin.";
+                break;
+            case MapType.Map2:
+            case MapType.Map3:
+                hintText.text = "By pressing control you can switch between me and your body, so I may help you in need. Press Enter";
+                break;
+            case MapType.AllMaps:
+                hintText.text = "Press Space to Use your knife to cut trees and beasts in both forms. Go ahead and use this knowledge to push the crate to the hole in the wall to walk across.";
+                hintText.gameObject.SetActive(false);  // Hide text as no Enter key action is needed to start
+                canMove = true;  // Enable movement immediately
+                break;
+        }
+    }
+
+    private void HandleEnterPress()
 {
-    if (Input.GetKeyDown(KeyCode.Return))
+    if (currentMap == MapType.Map1 && !awaitingWASDInput)
     {
-        if (currentMap == MapType.Map1 && !canMove && !awaitingWASDInput)
-        {
-            hintText.text = "You can move around using the WASD keys. Go ahead.";
-            StartCoroutine(AllowMovementForSeconds(3.5f));
-            awaitingWASDInput = true;
-        }
-        else if (currentMap == MapType.Map1 && awaitingWASDInput)
-        {
-            hintText.text = "";
-            canMove = true;
-            awaitingWASDInput = false;
-        }
-        else
-        {
-            canMove = true;
-            hintText.gameObject.SetActive(false);
-        }
+        // Only update text and set canMove to true if it's the initial press
+        hintText.text = "You can move around using the WASD keys. Go ahead and try.";
+        canMove = true; // Allow movement, but timer starts on WASD press
     }
-
-    if (currentMap == MapType.Map2 || currentMap == MapType.Map3)
+    else
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl))
-        {
-            StartCoroutine(ControlSpriteCoroutine());
-        }
-    }
-
-    // Prevent movement and other interactions if control mode is active or sword switching is in progress
-    if (!canMove || isControlActive || isSwitchingToSword)
-        return;
-
-    HandleMovementInput();
-
-    // Map3 specific functionality
-    if (currentMap == MapType.Map3)
-    {
-        if (Input.GetKeyDown(KeyCode.Space) && canMove && !hasControlBeenPressed && !isSwitchingToSword)
-        {
-            StartCoroutine(SwitchToSwordSprite());
-        }
+        // Final phase after second Enter press
+        canMove = true;
+        hintText.gameObject.SetActive(false); // Optionally hide the text
     }
 }
 
     private void HandleMovementInput()
     {
         Vector3 moveDirection = Vector3.zero;
+        bool wasMoving = isMoving;
         isMoving = false;
 
         if (Input.GetKey(KeyCode.D)) { moveDirection += Vector3.right; isMoving = true; }
@@ -109,20 +122,33 @@ public class MainPlayerMovement : MonoBehaviour
 
         if (isMoving)
         {
+            if (!wasMoving) // Start the sound when movement starts
+                audioSource.Play();
+
             transform.position += moveDirection.normalized * speed * Time.deltaTime;
             AnimateMovementSprite();
-            inactivityTimer = 0f;
         }
-        else if (!isControlActive)
+        else
         {
-            inactivityTimer += Time.deltaTime;
-            if (inactivityTimer >= 0.5f)
-            {
+            if (wasMoving) // Stop the sound when movement stops
+                audioSource.Stop();
+
+            if (!isControlActive)
                 spriteRenderer.sprite = idleSprite;
-                inactivityTimer = 0f;
-            }
         }
     }
+
+    private void CheckForInitialMovementInput()
+{
+    if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
+    {
+        if (!firstWASDPressed)
+        {
+            firstWASDPressed = true; // Ensures the 5-second timer starts only once
+            StartCoroutine(AllowMovementForSeconds(2)); // Start the 5-second timer
+        }
+    }
+}
 
     private void AnimateMovementSprite()
     {
@@ -137,15 +163,15 @@ public class MainPlayerMovement : MonoBehaviour
     }
 
     IEnumerator AllowMovementForSeconds(float seconds)
+{
+    yield return new WaitForSeconds(seconds);
+    if (firstWASDPressed) // Make sure timer affects movement only after first WASD press
     {
-        canMove = true; // Enable movement
-        yield return new WaitForSeconds(seconds); // Wait for specified seconds
-
-        // After the interval, prompt to press Enter again to continue
-        canMove = false;
-        hintText.text = "You can move around using the WASD keys. Go ahead. Press Enter to continue.";
-        awaitingWASDInput = true; // Set to waiting for Enter to be pressed before allowing movement again
+        canMove = false; // Disable movement after 5 seconds
+        awaitingWASDInput = true;
+        hintText.text = "You can move around using the WASD keys. Go ahead and try. Press Enter to continue."; // Set flag to show new text and wait for Enter press
     }
+}
 
     IEnumerator ControlSpriteCoroutine()
 {
@@ -154,35 +180,35 @@ public class MainPlayerMovement : MonoBehaviour
     {
         isControlActive = true; // Enable control mode for initial press
         spriteRenderer.sprite = controlSprite;
+        audioSource.clip = controlSound;
+        audioSource.Play();
         float endTime = Time.time + 1.5f;
-    while (Time.time < endTime)
-    {
-        transform.position += new Vector3(Random.Range(-0.05f, 0.05f), Random.Range(-0.05f, 0.05f), 0);
-        yield return null; // Wait for the next frame
-    }
+        while (Time.time < endTime)
+        {
+            transform.position += new Vector3(Random.Range(-0.05f, 0.05f), Random.Range(-0.05f, 0.05f), 0);
+            yield return null; // Wait for the next frame
+        }
         canMove = false; // Disable WASD movement while in control mode
         spriteRenderer.sprite = idleSprite;
+        audioSource.Stop();
     }
     else
     {
         isControlActive = false; // Disable control mode for second press
         spriteRenderer.sprite = controlSprite;
+        audioSource.clip = controlSound;
+        audioSource.Play();
         float endTime = Time.time + 1.5f;
-    while (Time.time < endTime)
-    {
-        transform.position += new Vector3(Random.Range(-0.05f, 0.05f), Random.Range(-0.05f, 0.05f), 0);
-        yield return null; // Wait for the next frame
-    }
+        while (Time.time < endTime)
+        {
+            transform.position += new Vector3(Random.Range(-0.05f, 0.05f), Random.Range(-0.05f, 0.05f), 0);
+            yield return null; // Wait for the next frame
+        }
         canMove = true;
         spriteRenderer.sprite = idleSprite;
+        audioSource.Stop();
     }
-
-    // Simulate astral movement with control sprite
-
 }
-
-
-
 
 
     IEnumerator SwitchToSwordSprite()
